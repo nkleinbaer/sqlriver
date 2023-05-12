@@ -41,9 +41,6 @@ func NewLexer(source string) *Lexer {
 func (l *Lexer) isAtEnd() bool {
 	return l.next >= l.total
 }
-func (l *Lexer) _isAtEnd(i int) bool {
-	return l.next >= l.total
-}
 
 func (l *Lexer) advance() {
 	log.Printf("Advancing")
