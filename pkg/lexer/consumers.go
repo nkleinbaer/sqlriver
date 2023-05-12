@@ -98,7 +98,7 @@ func (l *Lexer) consumeComment() error {
 	return nil
 }
 
-func (l *Lexer) consumerIdentifier() error {
+func (l *Lexer) consumeIdentifier() error {
 	log.Println("Attempting to consume Identifier")
 	gobbler := identifierGobbler{l: l}
 	l.gobbleChars(gobbler)

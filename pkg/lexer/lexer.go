@@ -171,7 +171,7 @@ func (l *Lexer) consumeToken() error {
 				return err
 			}
 		} else if utils.IsAlpha(c) {
-			if err := l.consumerIdentifier(); err != nil {
+			if err := l.consumeIdentifier(); err != nil {
 				return err
 			}
 		} else {
