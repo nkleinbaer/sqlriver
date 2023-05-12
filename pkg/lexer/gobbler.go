@@ -13,19 +13,20 @@ type Gobbler interface {
 	isDone() (bool, error)
 }
 
-type stringGobbler struct {
+type delimitedGobbler struct {
 	l *Lexer
+	d byte // the delimiter
 }
 
-func (s stringGobbler) isDone() (bool, error) {
+func (s delimitedGobbler) isDone() (bool, error) {
 	c := s.l.getChar(0)
 	log.Printf("%c", c)
 	if err := utils.ErrIfNewLine(c); err != nil {
 		return true, err
 	}
 	s.l.advance()
-	if c == '\'' {
-		if n := s.l.getChar(0); n == '\'' {
+	if c == s.d {
+		if n := s.l.getChar(0); n == s.d {
 			s.l.advance()
 			return false, nil
 		}

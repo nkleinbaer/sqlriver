@@ -4,7 +4,7 @@ import "errors"
 
 func ErrIfNewLine(b byte) error {
 	if b == '\n' {
-		return errors.New("EOL while scanning string constant")
+		return errors.New("Unexpected EOL while scanning")
 	}
 	return nil
 }
