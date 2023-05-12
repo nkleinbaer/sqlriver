@@ -1,42 +1,63 @@
 package main
 
 import (
-	//	"bufio"
+	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"sqlriver/pkg/lexer"
-	"sqlriver/pkg/utils"
 )
 
 func runFile(path string) {
-
-	// does file exist
-	_, err := os.Stat(path)
-	utils.Check(err)
-	// try opening
 	dat, err := os.ReadFile(path)
-	utils.Check(err)
-
+	if err != nil {
+		log.Fatal("Error opening file: ", err)
+	}
 	source := string(dat)
-	log.Println("Read value: ")
-	log.Println(source)
-	run(source)
+	log.Print("Read input from file:\n", source)
+	log.Print(len(source))
+	if err := run(source); err != nil {
+		log.Fatal(err)
+	}
 
 }
 
-func run(source string) {
+func runPrompt() {
+	// TODO: Add meta-commands for help, quit etc.
+	reader := bufio.NewReader(os.Stdin)
+	for true {
+		fmt.Print(">")
+		text, err := reader.ReadString('\n')
+		if err == io.EOF {
+			os.Exit(0)
+		} else if err != nil {
+			log.Fatal("Error reading from stdin: ", err)
+		}
+		fmt.Print("Got input: ", text)
+		if err := run(text); err != nil {
+			fmt.Println(err)
+		}
+	}
+}
+
+func run(source string) error {
 	lexer := lexer.NewLexer(source)
-	tokens := lexer.Lex()
+	tokens, err := lexer.Lex()
+	if err != nil {
+		return err
+	}
 	for _, token := range tokens {
 		fmt.Println(token)
 	}
+	return nil
 }
 
 func main() {
 	nArgs := len(os.Args)
 
 	if nArgs > 2 {
+		// TODO add better usage prompts
 		fmt.Println("Usage: sqlriver [input_file]")
 		os.Exit(64)
 	} else if nArgs == 2 {
@@ -44,8 +65,8 @@ func main() {
 		log.Println("Running on file at ", fp)
 		runFile(fp)
 	} else {
-		//runStdIn()i
-		fmt.Println("Running from stdin")
+		fmt.Println("Running in REPL prompt")
+		runPrompt()
 	}
 
 }

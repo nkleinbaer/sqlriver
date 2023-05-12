@@ -2,43 +2,66 @@ package token
 
 import (
 	"fmt"
+	"strings"
 )
 
-// Weekday - Custom type to hold value for weekday ranging from 1-7
-type TokenType int
+const OPERATORS = "+-*/<>=~!@#%^&|`?"
 
-// Declare related constants for each weekday starting with index 1
+type TokenType string
+
+// A dollar sign ($) followed by digits is used to represent a positional parameter in the body of a function definition or a prepared statement. In other contexts the dollar sign can be part of an identifier or a dollar-quoted string constant.
+
+// Parentheses (()) have their usual meaning to group expressions and enforce precedence. In some cases parentheses are required as part of the fixed syntax of a particular SQL command.
+
+// Brackets ([]) are used to select the elements of an array. See Section 8.15 for more information on arrays.
+
+// Commas (,) are used in some syntactical constructs to separate the elements of a list.
+
+// The semicolon (;) terminates an SQL command. It cannot appear anywhere within a command, except within a string constant or quoted identifier.
+
+// The colon (:) is used to select “slices” from arrays. (See Section 8.15.) In certain SQL dialects (such as Embedded SQL), the colon is used to prefix variable names.
+
+// The asterisk (*) is used in some contexts to denote all the fields of a table row or composite value. It also has a special meaning when used as the argument of an aggregate function, namely that the aggregate does not require any explicit parameter.
+
+// The period (.) is used in numeric constants, and to separate schema, table, and column names.
+
 const (
-	// one-char delimeters
-	Comma TokenType = iota
-	ParenOpen
-	ParenClose
-	Period
-	Colon
-	Equals
-	Asterisk
-	Plus
-	ForwardSlash
+	// Special Characters
+	DollarSign   = "DollarSign"
+	ParenOpen    = "ParenOpen"
+	ParenClose   = "ParenClose"
+	BracketOpen  = "BracketOpen"
+	BracketClose = "BracketClose"
+	Comma        = "Comma"
+	Semicolon    = "Semicolon"
+	Colon        = "Colon"
+	Asterisk     = "Asterisk"
+	Period       = "Period"
 
-	// two-char delimeters
-	LessThan
-	GreaterThan
-	NotEquals
-	GreaterThanEquals
-	LessThanEquals
+	// All Opertors
+	Operator = "Operator"
 
-	// delimeters needing look ahead
-	Minus
+	// Constants
+	StringConstant        = "StringConstant"
+	EscapedStringConstant = "EscapedStringConstant"
+	UnicodeStringConstant = "UnicodeStringConstant"
+	DollarStringConstant  = "DollarStringConstant"
+	BitStringConstant     = "BitStringConstant"
+	NumericConstant       = "NumericConstant"
+	// Other
+	FunctionArg = "FunctionArg"
+	Comment     = "Comment"
 
-	// seperators
-	Space
-	NewLine
-	Comment
+	// // delimeters needing look ahead
+	// Minus
+
+	// // seperators
+	// Space
+	NewLine = "NewLine"
+
+	// Identifiers
+	Identifier = "Identifier"
 )
-
-func (tt TokenType) String() string {
-	return [...]string{"Comma", "ParenOpen", "ParenClose", "Period", "Colon", "Equals", "Asterisk", "Plus", "ForwardSlash", "LessThan", "GreaterThan", "NotEquals", "GreaterThanEquals", "LessThanEquals", "Minus", "Space", "NewLine", "Comment"}[tt]
-}
 
 // delimiter ::= <alpha-literal> | , | ( | ) | < | > | . | : | =
 //
@@ -60,5 +83,17 @@ func NewToken(t TokenType, lexeme string, line int, start int) *Token {
 
 // for printing tokens
 func (t Token) String() string {
-	return fmt.Sprintf("%v", t.ttype)
+	if t.ttype == NewLine {
+		return fmt.Sprintf("%v: \\n", t.ttype)
+	}
+	return fmt.Sprintf("%v: %v", t.ttype, t.lexeme)
+}
+
+func CheckKeyword(lexeme string) TokenType {
+	lexeme = strings.ToUpper(lexeme)
+	if t, ok := KEYWORDS[lexeme]; ok {
+		return t
+	} else {
+		return Identifier
+	}
 }
