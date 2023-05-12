@@ -18,7 +18,7 @@ func (l *Lexer) consumeOperator() error {
 
 func (l *Lexer) consumeStringConstant() error {
 	log.Println("Attempting to consume StringConstant")
-	gobbler := stringGobbler{l: l}
+	gobbler := delimitedGobbler{l: l, d: '\''}
 	if err := l.gobbleChars(gobbler); err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func (l *Lexer) consumeStringConstant() error {
 
 func (l *Lexer) consumeEscapedStringConstant() error {
 	log.Println("Attempting to consume EscapedStringConstant")
-	gobbler := stringGobbler{l: l}
+	gobbler := delimitedGobbler{l: l, d: '\''}
 	if err := l.gobbleChars(gobbler); err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func (l *Lexer) consumeEscapedStringConstant() error {
 
 func (l *Lexer) consumeUnicodeStringConstant() error {
 	log.Println("Attempting to consume EscapedStringConstant")
-	gobbler := stringGobbler{l: l}
+	gobbler := delimitedGobbler{l: l, d: '\''}
 	if err := l.gobbleChars(gobbler); err != nil {
 		return err
 	}
@@ -103,5 +103,13 @@ func (l *Lexer) consumeIdentifier() error {
 	gobbler := identifierGobbler{l: l}
 	l.gobbleChars(gobbler)
 	l.addToken(token.Identifier)
+	return nil
+}
+
+func (l *Lexer) consumeDelimitedIdentifier() error {
+	log.Println("Attempting to consume DelimitedIdentifier")
+	gobbler := delimitedGobbler{l: l, d: '"'}
+	l.gobbleChars(gobbler)
+	l.addToken(token.DelimitedIdentifier)
 	return nil
 }

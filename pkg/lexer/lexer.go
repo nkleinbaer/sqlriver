@@ -133,6 +133,10 @@ func (l *Lexer) consumeToken() error {
 			}
 		}
 		l.addToken(token.Period)
+	case '"':
+		if err := l.consumeDelimitedIdentifier(); err != nil {
+			return err
+		}
 	case '\'':
 		if err := l.consumeStringConstant(); err != nil {
 			return err

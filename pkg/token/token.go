@@ -60,7 +60,8 @@ const (
 	NewLine = "NewLine"
 
 	// Identifiers
-	Identifier = "Identifier"
+	Identifier          = "Identifier"
+	DelimitedIdentifier = "DelimitedIdentifier"
 )
 
 // delimiter ::= <alpha-literal> | , | ( | ) | < | > | . | : | =
